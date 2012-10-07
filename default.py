@@ -161,7 +161,15 @@ if g_nasoverride == "true":
         printDebug("PleXBMC -> NAS IP: " + g_nasoverrideip, False)
         
     g_nasroot = __settings__.getSetting('nasroot')
-  
+    
+#NAS Root Override
+g_nasrootoverride = __settings__.getSetting('nasrootoverride')
+printDebug("PleXBMC -> NAS ROOT Override: " + g_nasrootoverride, False)   
+if g_nasrootoverride == "true": 
+    g_nasrootold = __settings__.getSetting('nasrootold')
+    g_nasrootnew = __settings__.getSetting('nasrootnew')
+    printDebug("PleXBMC -> NAS ROOT Override: old = "+ g_nasrootold + ", new = " + g_nasrootnew, False)
+    
 #Get look and feel
 if __settings__.getSetting("contextreplace") == "true":
     g_contextReplace=True
@@ -744,13 +752,13 @@ def mediaType( partData, server, dvdplayback=False ): # CHECKED
                 
                 
             if file.find('Volumes') > 0:
-                filelocation=protocol+":/"+file.replace("Volumes",loginstring+server)
+                filelocation=protocol+":/"+file.replace("Volumes",loginstring+server).replace(g_nasrootold, g_nasrootnew)
             else:
                 if type == "winfile":
-                    filelocation=protocol+"://"+loginstring+server+"/"+file[3:]
+                    filelocation=protocol+"://"+loginstring+server+"/"+file[3:].replace(g_nasrootold, g_nasrootnew)
                 else:
                     #else assume its a file local to server available over smb/samba (now we have linux PMS).  Add server name to file path.
-                    filelocation=protocol+"://"+loginstring+server+file
+                    filelocation=protocol+"://"+loginstring+server+file.replace(g_nasrootold, g_nasrootnew)
                     
         if g_nasoverride == "true" and g_nasroot != "":
             #Re-root the file path
